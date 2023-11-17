@@ -3,7 +3,7 @@ class Star extends Floater{
     myCenterX = x;
     myCenterY = y;
   }
-  void show(){
+  public void show(){
     translate(0, 0);
     fill(255);
     ellipse((float)myCenterX, (float)myCenterY, 5, 5);
