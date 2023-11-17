@@ -1,5 +1,5 @@
 class Button{
-  private int x, y, sX, sY, textSize;
+  private int x, y, sX, sY, tSize;
   private String bText;
   public Button(int pX, int pY, int sizeX, int sizeY, String buttonText){
     x = pX;
@@ -7,15 +7,15 @@ class Button{
     sX = sizeX;
     sY = sizeY;
     bText = buttonText;
-    textSize = 15;
+    tSize = 15;
   }
-  public Button(int pX, int pY, int sizeX, int sizeY, String buttonText, int tSize){
+  public Button(int pX, int pY, int sizeX, int sizeY, String buttonText, int ts){
     x = pX;
     y = pY;
     sX = sizeX;
     sY = sizeY;
     bText = buttonText;
-    textSize = tSize;
+    tSize = ts;
   }
   public boolean checkClick(){
     if(mouseX >= x && mouseX <= x + sX && mouseY >= y && mouseY <= y + sY){
@@ -27,7 +27,7 @@ class Button{
   }
   public void show(){
     textAlign(CENTER);
-    textSize(textSize);
+    textSize(tSize);
     if(mouseX >= x && mouseX <= x + sX && mouseY >= y && mouseY <= y + sY){
       fill(#0C9CE8);
       noStroke();
