@@ -84,7 +84,7 @@ void draw(){
     thrustLimit();
     player.move();
     collisions();
-    controls();
+    controlShip();
     player.show();
     healthBar();
     trackScore();
@@ -205,7 +205,7 @@ void collisions(){
     }
   }
 }
-void controls(){
+void controlShip(){
   if(right){
     player.turn(2);
   }
