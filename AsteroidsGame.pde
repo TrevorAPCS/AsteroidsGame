@@ -2,8 +2,7 @@ Spaceship player;
 int sHealth;
 ArrayList<Asteroid> asteroids;
 ArrayList<Bullet> bullets = new ArrayList<Bullet>();
-ArrayList<Targeter> targeters = new ArrayList<Targeter>();
-Spaceship test = new Targeter(400, 400, 0, 4, player);
+//ArrayList<Targeter> targeters = new ArrayList<Targeter>();
 Floater[] floaters = new Floater[100];
 boolean left = false;
 boolean right = false;
@@ -21,7 +20,7 @@ int menuState = 1;
 Button start;
 Button controls;
 Button exit;
-int score = 290;
+int score = 0;
 int highScore = 0;
 int scoreTimer;
 //Targeter targeter = new Targeter(400, 400, 0, 4, player);
@@ -75,12 +74,12 @@ void draw(){
     for(int i = 0; i < floaters.length; i++){
       ((Star)floaters[i]).show();
     }
-    for(int i = 0; i < targeters.size(); i++){
+    /*for(int i = 0; i < targeters.size(); i++){
       Targeter t = (targeters.get(i));
       t.targetShip();
       t.moveShip();
       t.show();
-    }
+    }*/
     moveBullets();
     thrustLimit();
     player.move();
@@ -177,7 +176,7 @@ void collisions(){
         }
       }
     }
-    for(int s = 0; s < targeters.size(); s++){
+    /*for(int s = 0; s < targeters.size(); s++){
       Targeter b = targeters.get(s);
         if(a.checkCollision((float)b.getX(), (float)b.getY())){
           b.activateTimer();
@@ -190,7 +189,7 @@ void collisions(){
           b.setXspeed(ax);
           b.setYspeed(ay);
       }
-    }
+    }*/
   }
   for(int i = 0; i < bullets.size(); i++){
   Bullet a = bullets.get(i);
