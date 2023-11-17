@@ -26,10 +26,10 @@ int scoreTimer;
 //Targeter targeter = new Targeter(400, 400, 0, 4, player);
 
 void setup(){
-  size(1000, 700);
-  start = new Button(150, 475, 700, 100, "Start", 50);
-  controls = new Button(150, 350, 700, 100, "Controls", 50);
-  exit = new Button(100, 500, 200, 100, "Exit", 50);
+  size(1000, 600);
+  start = new Button(150, 400, 700, 100, "Start", 50);
+  controls = new Button(150, 275, 700, 100, "Controls", 50);
+  exit = new Button(100, 400, 200, 100, "Exit", 50);
   //targeters.add(targeter);
 }
 void draw(){
@@ -41,32 +41,32 @@ void draw(){
     textSize(100);
     fill(#0C9CE8);
     if(menuState == 1){
-      text("Asteroids", 500, 200);
+      text("Asteroids", 500, 150);
       start.show();
       controls.show();
       fill(#0C9CE8);
       textSize(40);
-      text("Score: " + score, 350, 300);
-      text("Highscore: " + highScore, 650, 300);
+      text("Score: " + score, 350, 250);
+      text("Highscore: " + highScore, 650, 250);
     }
     else if(menuState == 2){
-      text("Game Over", 500, 200);
+      text("Game Over", 500, 150);
       start.show();
       controls.show();
       fill(#0C9CE8);
       textSize(40);
-      text("Score: " + score, 350, 300);
-      text("Highscore: " + highScore, 650, 300);
+      text("Score: " + score, 350, 250);
+      text("Highscore: " + highScore, 650, 250);
     }
     else if(menuState == 3){
-      text("Controls:", 500, 200);
+      text("Controls:", 500, 150);
       textSize(30);
-      text("Accelerate: UP", 500, 325);
-      text("Reverse: DOWN", 500, 375);
-      text("Turn Left: LEFT", 500, 425);
-      text("Turn Right: RIGHT", 500, 475);
-      text("HyperSpace: SPACE", 500, 525);
-      text("Shoot Bullets: S", 500, 575);
+      text("Accelerate: UP", 500, 225);
+      text("Reverse: DOWN", 500, 275);
+      text("Turn Left: LEFT", 500, 325);
+      text("Turn Right: RIGHT", 500, 375);
+      text("HyperSpace: SPACE", 500, 425);
+      text("Shoot Bullets: S", 500, 475);
       exit.show();
     }
   }
