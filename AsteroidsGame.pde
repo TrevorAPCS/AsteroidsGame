@@ -26,17 +26,17 @@ int scoreTimer;
 //Targeter targeter = new Targeter(400, 400, 0, 4, player);
 
 void setup(){
-  size(1000, 850);
-  start = new Button(150, 600, 700, 100, "Start", 50);
-  controls = new Button(150, 475, 700, 100, "Controls", 50);
-  exit = new Button(100, 650, 200, 100, "Exit", 50);
+  size(1000, 700);
+  start = new Button(150, 475, 700, 100, "Start", 50);
+  controls = new Button(150, 350, 700, 100, "Controls", 50);
+  exit = new Button(100, 500, 200, 100, "Exit", 50);
   //targeters.add(targeter);
 }
 void draw(){
   background(0);
   if(menu){
     fill(50);
-    rect(50, 50, 900, 750);
+    rect(50, 50, width - 100, height - 100);
     textAlign(CENTER);
     textSize(100);
     fill(#0C9CE8);
@@ -46,8 +46,8 @@ void draw(){
       controls.show();
       fill(#0C9CE8);
       textSize(40);
-      text("Score: " + score, 500, 325);
-      text("Highscore: " + highScore, 500, 400);
+      text("Score: " + score, 350, 300);
+      text("Highscore: " + highScore, 650, 300);
     }
     else if(menuState == 2){
       text("Game Over", 500, 200);
@@ -55,8 +55,8 @@ void draw(){
       controls.show();
       fill(#0C9CE8);
       textSize(40);
-      text("Score: " + score, 500, 325);
-      text("Highscore: " + highScore, 500, 375);
+      text("Score: " + score, 350, 300);
+      text("Highscore: " + highScore, 650, 300);
     }
     else if(menuState == 3){
       text("Controls:", 500, 200);
