@@ -25,7 +25,7 @@ int shipType = 1;
 void setup(){
   lines = loadStrings("HighScore.txt");
   try{
-    highScore = Integer.parseInt(lines[0]);
+    highScore = int(lines[0]);
   }
   catch(NumberFormatException n){
     highScore = 0;
