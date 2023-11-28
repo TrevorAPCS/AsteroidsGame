@@ -23,11 +23,8 @@ class Targeter extends Spaceship{
     thrusterTimerRequirement = 10;
   }
   public void targetShip(){
-    double targetDirection = Math.toDegrees(Math.atan2(target.getY() - myCenterY, target.getX() - myCenterX));
+    double targetDirection = toDegrees(Math.atan2(target.getY() - myCenterY, target.getX() - myCenterX));
     boolean playerBehind = myCenterX - target.getX() > 0;
-    stroke(255, 255, 255);
-    line((float)myCenterX, (float)myCenterY, (float)(myCenterX + 1000*Math.cos(Math.toRadians(targetDirection))), (float)(myCenterY + 1000*Math.sin(Math.toRadians(targetDirection))));
-    stroke(0);
     if(targetDirection > 180){targetDirection -= 180;}
     if(targetDirection < -180){targetDirection += 180;}
     if(playerBehind){
@@ -67,7 +64,7 @@ class Targeter extends Spaceship{
   public void moveShip(){
     if(thrusters){
       setAccelerating(true);
-      double dRadians =myPointDirection*(Math.PI/180);  
+      double dRadians = myPointDirection*(Math.PI/180);  
       myXspeed = mySpeed * Math.cos(dRadians);
       myYspeed = mySpeed * Math.sin(dRadians);
     }
@@ -75,5 +72,8 @@ class Targeter extends Spaceship{
   }
   public Spaceship getTarget(){
     return target;
+  }
+  private double toDegrees(double radians){
+    return radians * (180 / PI);
   }
 }
