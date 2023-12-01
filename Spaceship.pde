@@ -1,7 +1,7 @@
 class Spaceship extends Floater{
   protected boolean accelerating, reversing, thrusters;
   protected double health, mass, acceleration, turning;
-  protected int myDefaultColor, thrusterTimer, thrusterTimerRequirement, sHealth;
+  protected int myDefaultColor, thrusterTimer, thrusterTimerRequirement, sHealth, flameOffset;
   protected String name;
   public Spaceship(){
     myCenterX = width / 2;
@@ -39,6 +39,7 @@ class Spaceship extends Floater{
     thrusters = true;
     thrusterTimer = 0;
     thrusterTimerRequirement = 5;
+    flameOffset = 0;
     if(type == 2){
       name = "Speed";
       corners = 4;
@@ -52,8 +53,8 @@ class Spaceship extends Floater{
     else if(type == 3){
       name = "Tank";
       corners = 6;
-      xCorners = new int[]{10, 0, -10, -5, -10, 0};
-      yCorners = new int[]{0, 5, 5, 0, -5, -5};
+      xCorners = new int[]{12, 0, -12, -6, -12, 0};
+      yCorners = new int[]{0, 7, 7, 0, -7, -7};
       health = 600;
       mass = 2;
       acceleration = 0.15;
@@ -68,6 +69,7 @@ class Spaceship extends Floater{
       mass = 1.2;
       acceleration = 0.20;
       turning = 1.6;
+      flameOffset = -3;
     }
     sHealth = (int)health;
   }
@@ -77,6 +79,12 @@ class Spaceship extends Floater{
     myPointDirection = Math.random() * 360;
     myCenterX = Math.random() * 500;
     myCenterY = Math.random() * 500;
+  }
+  public double getAcceleration(){
+    return acceleration;
+  }
+  public double getTurning(){
+    return turning;
   }
   public double getX(){
     return myCenterX;
@@ -129,6 +137,9 @@ class Spaceship extends Floater{
   public double getHealth(){
     return health;
   }
+  public double getSHealth(){
+    return sHealth;
+  }
   public double getHealthPercentage(){
     return health / sHealth;
   }
@@ -153,9 +164,6 @@ class Spaceship extends Floater{
     myColor = myDefaultColor;
   }
   public void show (){             
-    fill(myColor);   
-    stroke(myColor);    
-    
     //translate the (x,y) center of the ship to the correct position
     translate((float)myCenterX, (float)myCenterY);
 
@@ -165,6 +173,29 @@ class Spaceship extends Floater{
     //rotate so that the polygon will be drawn in the correct direction
     rotate(dRadians);
     
+    //draw thruster flames
+    if(accelerating){
+      fill(#F07E0C);
+      stroke(255, 0, 0);
+      beginShape();
+      vertex(-5 + flameOffset, 0);
+      vertex(-8 + flameOffset, 3);
+      vertex(-10 + flameOffset, 0);
+      vertex(-8 + flameOffset, -3);
+      vertex(-5 + flameOffset, 0);
+      endShape(CLOSE);
+      stroke(0);
+    }
+    if(reversing){
+      stroke(#F07E0C);
+      line(5, 3, 7, 4);
+      line(5, -3, 7, -4);
+      stroke(0);
+    }
+    
+    fill(myColor);   
+    stroke(myColor);    
+    
     //draw the polygon
     beginShape();
     for (int nI = 0; nI < corners; nI++)
@@ -172,23 +203,6 @@ class Spaceship extends Floater{
       vertex(xCorners[nI], yCorners[nI]);
     }
     endShape(CLOSE);
-    
-    if(accelerating){
-      fill(255, 0, 0);
-      beginShape();
-      vertex(-5, 0);
-      vertex(-8, 3);
-      vertex(-10, 0);
-      vertex(-8, -3);
-      vertex(-5, 0);
-      endShape(CLOSE);
-    }
-    if(reversing){
-      stroke(255, 0, 0);
-      line(5, 3, 7, 4);
-      line(5, -3, 7, -4);
-      stroke(255);
-    }
 
     //"unrotate" and "untranslate" in reverse order
     rotate(-1*dRadians);
@@ -235,7 +249,7 @@ class Spaceship extends Floater{
     double mso = ((mass - otherm)/(mass + otherm)) * msi + ((2 * otherm) / (mass + otherm)) * others;
     myXspeed = Math.cos(dir) * mso;
     myYspeed = Math.sin(dir) * mso;
-    health -= (otherm * (msi + 1) * 2);
+    health -= (otherm * ((msi/2) + 2) * 2);
     thrusterTimer = 0;
     setThrusters(false);
   }
