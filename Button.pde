@@ -36,7 +36,7 @@ class Button{
       text(bText, x + sX/2, y + sY/(1.5));
     }
     else{
-      fill(100);
+      fill(75);
       noStroke();
       rect(x, y, sX, sY);
       fill(#0C9CE8);
