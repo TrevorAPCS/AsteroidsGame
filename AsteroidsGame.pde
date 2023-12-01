@@ -66,7 +66,7 @@ void draw(){
       textSize(40);
       text("Ship: " + player.getName(), 600, 375);
       text("Score: " + score, 200, 225);
-      text("Highscore: " + highScore, 450, 225);
+      text("Highscore: " + highScore, 500, 225);
       textSize(20);
       text("Speed: ", 800, 270);
       text("Turning: ", 800, 320);
@@ -94,7 +94,7 @@ void draw(){
       textSize(40);
       text("Ship: " + player.getName(), 600, 375);
       text("Score: " + score, 200, 225);
-      text("Highscore: " + highScore, 450, 225);
+      text("Highscore: " + highScore, 500, 225);
       textSize(20);
       text("Speed: ", 800, 270);
       text("Turning: ", 800, 320);
