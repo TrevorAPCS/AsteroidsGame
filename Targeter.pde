@@ -1,8 +1,8 @@
 class Targeter extends Spaceship{
   private Spaceship target;
-  private double mySpeed;
+  private double maxSpeed;
   private int maxRotation;
-  public Targeter(int x, int y, int dir, int c, Spaceship t){
+  public Targeter(double x, double y, double dir, int c, Spaceship t){
     myCenterX = x;
     myCenterY = y;
     myPointDirection = dir;
@@ -17,10 +17,10 @@ class Targeter extends Spaceship{
     reversing = false;
     health = 300;
     target = t;
-    mySpeed = 1;
     maxRotation = 1;
     thrusterTimer = 0;
     thrusterTimerRequirement = 10;
+    maxSpeed = 1;
   }
   public void targetShip(){
     double targetDirection = toDegrees(Math.atan2(target.getY() - myCenterY, target.getX() - myCenterX));
@@ -62,11 +62,22 @@ class Targeter extends Spaceship{
     if(myPointDirection < -180){myPointDirection += 180;}
   }
   public void moveShip(){
+    //maxSpeed = 0.001 * dist((float)target.getX(), (float)target.getY(), (float)myCenterX, (float)myCenterY) + 1;
     if(thrusters){
       setAccelerating(true);
-      double dRadians = myPointDirection*(Math.PI/180);  
-      myXspeed = mySpeed * Math.cos(dRadians);
-      myYspeed = mySpeed * Math.sin(dRadians);
+      accelerate(0.1);
+      if(myXspeed > maxSpeed){
+        myXspeed -= 0.1;
+      }
+      if(myYspeed > maxSpeed){
+        myYspeed -= 0.1;
+      }
+      if(myXspeed < -maxSpeed){
+        myXspeed += 0.1;
+      }
+      if(myYspeed < -maxSpeed){
+        myYspeed += 0.1;
+      }
     }
     move();
   }
