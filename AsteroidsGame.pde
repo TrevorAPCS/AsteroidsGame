@@ -1,15 +1,17 @@
+int gFrames = 0;
 String[] lines;
 Spaceship player = new Spaceship(1);
 ArrayList<Asteroid> asteroids;
 ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 ArrayList<Targeter> targeters;
-Floater[] floaters = new Floater[100];
+Star[] stars = new Star[100];
 boolean left = false;
 boolean right = false;
 boolean up = false;
 boolean down = false;
 boolean shoot = false;
 int numAsteroids = 20;
+int numTargeters = 0;
 int bulletTimer = 0;
 int bulletTimeLimit = 10;
 boolean menu = true;
@@ -49,8 +51,8 @@ void draw(){
     textAlign(CENTER);
     textSize(100);
     fill(#0C9CE8);
-    player.setX(500);
-    player.setY(350);
+    player.setX(600);
+    player.setY(300);
     player.setDirection(0);
     if(menuState == 1){
       text("Asteroids", 500, 150);
@@ -62,9 +64,23 @@ void draw(){
       player.show();
       fill(#0C9CE8);
       textSize(40);
-      text("Ship: " + player.getName(), 700, 350);
-      text("Score: " + score, 350, 250);
-      text("Highscore: " + highScore, 650, 250);
+      text("Ship: " + player.getName(), 600, 375);
+      text("Score: " + score, 200, 225);
+      text("Highscore: " + highScore, 450, 225);
+      textSize(20);
+      text("Speed: ", 800, 270);
+      text("Turning: ", 800, 320);
+      text("Health: ", 800, 370);
+      noStroke();
+      fill(75);
+      rect(750, 275, 150, 25);
+      rect(750, 325, 150, 25);
+      rect(750, 375, 150, 25);
+      fill(#0C9CE8);
+      rect(750, 275, (float)((player.getAcceleration() / 0.25) * 150), 25);
+      rect(750, 325, (float)((player.getTurning() / 2) * 150), 25);
+      rect(750, 375, (float)((player.getSHealth() / 600) * 150), 25);
+      stroke(1);
     }
     else if(menuState == 2){
       text("Game Over", 500, 150);
@@ -76,9 +92,23 @@ void draw(){
       player.show();
       fill(#0C9CE8);
       textSize(40);
-      text("Ship: " + player.getName(), 700, 350);
-      text("Score: " + score, 350, 250);
-      text("Highscore: " + highScore, 650, 250);
+      text("Ship: " + player.getName(), 600, 375);
+      text("Score: " + score, 200, 225);
+      text("Highscore: " + highScore, 450, 225);
+      textSize(20);
+      text("Speed: ", 800, 270);
+      text("Turning: ", 800, 320);
+      text("Health: ", 800, 370);
+      noStroke();
+      fill(75);
+      rect(750, 275, 150, 25);
+      rect(750, 325, 150, 25);
+      rect(750, 375, 150, 25);
+      fill(#0C9CE8);
+      rect(750, 275, (float)((player.getAcceleration() / 0.25) * 150), 25);
+      rect(750, 325, (float)((player.getTurning() / 2) * 150), 25);
+      rect(750, 375, (float)((player.getSHealth() / 600) * 150), 25);
+      stroke(1);
     }
     else if(menuState == 3){
       text("Controls:", 500, 150);
@@ -105,9 +135,10 @@ void draw(){
       exitGame.show();
     }
     else{
+      gFrames++;
       background(0);
-      for(int i = 0; i < floaters.length; i++){
-        ((Star)floaters[i]).show();
+      for(int i = 0; i < stars.length; i++){
+        (stars[i]).show();
       }
       moveBullets();
       player.move();
@@ -118,6 +149,9 @@ void draw(){
       trackScore();
       while(asteroids.size() < numAsteroids){
         addAsteroid();
+      }
+      while(targeters.size() < numTargeters){
+        addTargeter();
       }
       for(int i = 0; i < targeters.size(); i++){
         Targeter t = (targeters.get(i));
@@ -195,9 +229,10 @@ void collisions(){
       player.unIntrude(intrusion, paDirection);
       a.calculateCollisionSpeed(psi, player.getMass(), aa);
       player.calculateCollisionSpeed(asi, a.getMass(), pa);
-      if(a.getHealth() < 0){
-        asteroids.remove(a);
-      }
+    }
+    if(a.getHealth() <= 0){
+      asteroids.remove(a);
+      i -= 1;
     }
     for(int s = 0; s < asteroids.size(); s++){
       Asteroid b = asteroids.get(s);
@@ -212,11 +247,13 @@ void collisions(){
           b.unIntrude(intrusion, baDirection);
           a.calculateCollisionSpeed(bsi, b.getMass(), aa);
           b.calculateCollisionSpeed(asi, a.getMass(), ba);
-          if(a.getHealth() < 0){
+          if(a.getHealth() <= 0){
             asteroids.remove(a);
+            i -= 1;
           }
-          if(b.getHealth() < 0){
+          if(b.getHealth() <= 0){
             asteroids.remove(b);
+            s -= 1;
           }
         }
       }
@@ -232,22 +269,36 @@ void collisions(){
       t.unIntrude(intrusion, ptDirection);
       player.calculateCollisionSpeed(tsi, t.getMass(), ta);
       t.calculateCollisionSpeed(psi, player.getMass(), aa);
-      if(t.getHealth() < 0){
+      if(t.getHealth() <= 0){
         targeters.remove(t);
+        i -= 1;
       }
     }
   }
   for(int i = 0; i < bullets.size(); i++){
-  Bullet a = bullets.get(i);
+  Bullet b = bullets.get(i);
     for(int s = 0; s < asteroids.size(); s++){
-      Asteroid b = asteroids.get(s);
-      if(dist((float)a.getX(), (float)a.getY(), (float)b.getX(), (float)b.getY()) <= b.getSize()){
-        b.setMass(-0.25);
-        bullets.remove(a);
-        if(b.getHealth() < 0){
-          asteroids.remove(b);
+      Asteroid a = asteroids.get(s);
+      if(dist((float)a.getX(), (float)a.getY(), (float)b.getX(), (float)b.getY()) <= a.getSize()){
+        a.setMass(-0.25);
+        bullets.remove(b);
+        if(a.getHealth() <= 0){
+          asteroids.remove(a);
+          s -= 1;
         }
         score += 5;
+      }
+    }
+    for(int s = 0; s < targeters.size(); s++){
+      Targeter t = targeters.get(s);
+      if(dist((float)t.getX(), (float)t.getY(), (float)b.getX(), (float)b.getY()) <= 5){
+        t.setHealth(t.getHealth() - 50);
+        bullets.remove(b);
+        if(t.getHealth() <= 0){
+          targeters.remove(t);
+          s -= 1;
+        }
+        score += 10;
       }
     }
   }
@@ -293,6 +344,7 @@ void healthBar(){
   if(player.getHealth() <= 0){
     menu = true;
     menuState = 2;
+    player.setDefaultColor();
     lines[0] = str(highScore);
     saveStrings("HighScore.txt", lines);
   }
@@ -333,9 +385,15 @@ void mousePressed(){
       }
       if(restart.checkClick()){
         paused = false;
+        player.setDefaultColor();
+        lines[0] = str(highScore);
+        saveStrings("HighScore.txt", lines);
         initializeObjects();
       }
       if(exitGame.checkClick()){
+        player.setDefaultColor();
+        lines[0] = str(highScore);
+        saveStrings("HighScore.txt", lines);
         menu = true;
         menuState = 2;
       }
@@ -346,15 +404,21 @@ void initializeObjects(){
   player = new Spaceship(shipType);
   asteroids = new ArrayList<Asteroid>();
   targeters = new ArrayList<Targeter>();
-  targeter = new Targeter(400, 400, 0, 4, player);
-  targeters.add(targeter);
-  for(int i = 0; i < floaters.length; i++){
-    floaters[i] = new Star(Math.random() * 1000, (Math.random() * 800) + 50);
+  gFrames = 0;
+  for(int i = 0; i < numTargeters; i++){
+    Targeter t = new Targeter(Math.random() * width, Math.random() * height, Math.random() * 360, 4, player);
+    while(dist((float)t.getX(), (float)t.getY(), (float)player.getX(), (float)player.getY()) <= 50){
+      t = new Targeter(Math.random() * width, Math.random() * height, Math.random() * 360, 4, player);
+    }
+    targeters.add(t);
+  }
+  for(int i = 0; i < stars.length; i++){
+    stars[i] = new Star(Math.random() * 1000, (Math.random() * 800) + 50);
   }
   for(int i = 0; i < numAsteroids; i++){
-    Asteroid a = new Asteroid(Math.random() * 1000, (Math.random() * 800) + 50, Math.random() * 2 * PI, 15, Math.random() * 2, Math.random() * 2);
+    Asteroid a = new Asteroid(Math.random() * height, Math.random() * height, Math.random() * 360, 15, Math.random() * 2, Math.random() * 2);
     while(dist((float)a.getX(), (float)a.getY(), (float)player.getX(), (float)player.getY()) <= 50){
-      a = new Asteroid(Math.random() * width, (Math.random() * height) + 50, Math.random() * 2 * PI, 15, Math.random() * 2, Math.random() * 2);
+      a = new Asteroid(Math.random() * width, Math.random() * height, Math.random() * 360, 15, Math.random() * 2, Math.random() * 2);
     }
     asteroids.add(a);
   }
@@ -370,11 +434,11 @@ void trackScore(){
   if(score > highScore){
     highScore = score;
   }
-  if(score == 300){
-    numAsteroids += 1;
+  if(gFrames % 1500 == 0 && numAsteroids < 50){
+    numAsteroids += 5;
   }
-  if(score == 600){
-    numAsteroids += 1;
+  if(gFrames % 1500 == 0 && numTargeters < 5){
+    numTargeters += 1;
   }
   textAlign(CENTER);
   textSize(40);
@@ -386,16 +450,33 @@ void addAsteroid(){
   int spawnSide = (int)(Math.random() * 4);
   Asteroid a;
   if(spawnSide == 0){
-    a = new Asteroid(-20, Math.random() * height, Math.random() * 2 * PI, 10, Math.random() * 2, Math.random() * 2);
+    a = new Asteroid(-20, Math.random() * height, Math.random() * 360, 10, Math.random() * 2, Math.random() * 2);
   }
   else if(spawnSide == 1){
-    a = new Asteroid(width + 20, Math.random() * height, Math.random() * 2 * PI, 10, Math.random() * 2, Math.random() * 2);
+    a = new Asteroid(width + 20, Math.random() * height, Math.random() * 360, 10, Math.random() * 2, Math.random() * 2);
   }
   else if(spawnSide == 2){
-    a = new Asteroid(Math.random() * width, -20, Math.random() * 2 * PI, 10, Math.random() * 2, Math.random() * 2);
+    a = new Asteroid(Math.random() * width, -20, Math.random() * 360, 10, Math.random() * 2, Math.random() * 2);
   }
   else{
-    a = new Asteroid(Math.random() * width, height + 20 * height, Math.random() * 2 * PI, 10, Math.random() * 2, Math.random() * 2);
+    a = new Asteroid(Math.random() * width, height + 20 * height, Math.random() * 360, 10, Math.random() * 2, Math.random() * 2);
   }
   asteroids.add(a);
+}
+void addTargeter(){
+  int spawnSide = (int)(Math.random() * 4);
+  Targeter t;
+  if(spawnSide == 0){
+    t = new Targeter(-20, Math.random() * height, Math.random() * 360, 4, player);
+  }
+  else if(spawnSide == 1){
+    t = new Targeter(width + 20, Math.random() * height, Math.random() * 360, 4, player);
+  }
+  else if(spawnSide == 2){
+    t = new Targeter(Math.random() * width, -20, Math.random() * 360, 4, player);
+  }
+  else{
+    t = new Targeter(Math.random() * width, height + 20 * height, Math.random() * 360, 4, player);
+  }
+  targeters.add(t);
 }
