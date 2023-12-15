@@ -1,10 +1,29 @@
 class Asteroid extends Floater{
   private int mySize, health, collisionTimer, collisionTimeLimit;
-  private double mass, rotSpeed;
-  boolean collision;
+  protected double mass, rotSpeed;
+  private boolean collision;
+  public Asteroid(){
+    rotSpeed = Math.random() * 2 - 1;
+    mass = Math.random() * 3 + 3;
+    mySize = (int)(mass * 10);
+    health = (int)(mass * 100);
+    myCenterX = Math.random() * width;
+    myCenterY = Math.random() * height;
+    myColor = 150;
+    myPointDirection = Math.random() * 360;
+    corners = 12;
+    myXspeed = Math.random() * 2;
+    myYspeed = Math.random() * 2;
+    xCorners = new int[12];
+    yCorners = new int[12];
+    randomGenerate();
+    collisionTimer = 0;
+    collisionTimeLimit = 5;
+    collision = false;
+  }
   public Asteroid(double x, double y, double dir, int c, double xSpeed, double ySpeed){
     rotSpeed = Math.random() * 2 - 1;
-    mass = Math.random() * 3 + 2;
+    mass = Math.random() * 3 + 3;
     mySize = (int)(mass * 10);
     health = (int)(mass * 100);
     myCenterX = x;
@@ -61,6 +80,10 @@ class Asteroid extends Floater{
   }
   public void setMass(double s){
     mass += s;
+    if(mass < 1.5){
+      mass = 0;
+      health = 0;
+    }
     health = (int)(mass * 100);
     mySize = (int)(mass * 10);
     randomGenerate();
