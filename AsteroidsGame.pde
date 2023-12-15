@@ -4,20 +4,22 @@ Spaceship player = new Spaceship(1);
 ArrayList<Asteroid> asteroids;
 ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 ArrayList<Targeter> targeters;
+ArrayList<PowerUp> powerUps;
 Star[] stars = new Star[100];
 boolean left = false;
 boolean right = false;
 boolean up = false;
 boolean down = false;
 boolean shoot = false;
-int numAsteroids = 20;
-int numTargeters = 0;
-int bulletTimer = 0;
-int bulletTimeLimit = 10;
+int sNumAsteroids = 30;
+int sNumTargeters = 0;
+int numAsteroids;
+int numTargeters;
+int bulletTimeLimit = (int)player.getReloadSpeed();
 boolean menu = true;
 boolean paused = false;
 int menuState = 1;
-Button start, controls, exit, bClassic, bSpeed, bTank, resume, restart, exitGame;
+Button start, controls, powerUpInfo, exit, bClassic, bSpeed, bTank, bShield, bDestroyer, resume, restart, exitGame;
 int score = 0;
 int highScore;
 int scoreTimer;
@@ -34,11 +36,14 @@ void setup(){
   }
   size(1000, 600);
   start = new Button(100, 400, 300, 100, "Start", 50);
-  controls = new Button(100, 275, 300, 100, "Controls", 50);
+  controls = new Button(100, 280, 300, 50, "Controls", 35);
+  powerUpInfo = new Button(100, 340, 300, 50, "Power Ups", 35);
   exit = new Button(100, 425, 200, 75, "Exit", 50);
-  bClassic = new Button(450, 425, 125, 75, "Classic", 30);
-  bSpeed = new Button(625, 425, 125, 75, "Speed", 30);
-  bTank = new Button(800, 425, 125, 75, "Tank", 30);
+  bClassic = new Button(425, 425, 95, 75, "Classic", 20);
+  bSpeed = new Button(525, 425, 95, 75, "Speed", 20);
+  bTank = new Button(625, 425, 95, 75, "Tank", 20);
+  bShield = new Button(725, 425, 95, 75, "Shield", 20);
+  bDestroyer = new Button(825, 425, 95, 75, "Destroyer", 20);
   resume = new Button(350, 150, 300, 100, "Resume", 50);
   restart = new Button(350, 275, 300, 100, "Restart", 50);
   exitGame = new Button(350, 400, 300, 100, "Exit", 50);
@@ -51,75 +56,52 @@ void draw(){
     textAlign(CENTER);
     textSize(100);
     fill(#0C9CE8);
-    player.setX(600);
-    player.setY(300);
     player.setDirection(0);
     if(menuState == 1){
       text("Asteroids", 500, 150);
-      start.show();
-      controls.show();
-      bClassic.show();
-      bSpeed.show();
-      bTank.show();
-      player.show();
-      fill(#0C9CE8);
-      textSize(40);
-      text("Ship: " + player.getName(), 600, 375);
-      text("Score: " + score, 200, 225);
-      text("Highscore: " + highScore, 500, 225);
-      textSize(20);
-      text("Speed: ", 800, 270);
-      text("Turning: ", 800, 320);
-      text("Health: ", 800, 370);
-      noStroke();
-      fill(75);
-      rect(750, 275, 150, 25);
-      rect(750, 325, 150, 25);
-      rect(750, 375, 150, 25);
-      fill(#0C9CE8);
-      rect(750, 275, (float)((player.getAcceleration() / 0.25) * 150), 25);
-      rect(750, 325, (float)((player.getTurning() / 2) * 150), 25);
-      rect(750, 375, (float)((player.getSHealth() / 600) * 150), 25);
-      stroke(1);
+      startScreen();
     }
     else if(menuState == 2){
       text("Game Over", 500, 150);
-      start.show();
-      controls.show();
-      bClassic.show();
-      bSpeed.show();
-      bTank.show();
-      player.show();
-      fill(#0C9CE8);
-      textSize(40);
-      text("Ship: " + player.getName(), 600, 375);
-      text("Score: " + score, 200, 225);
-      text("Highscore: " + highScore, 500, 225);
-      textSize(20);
-      text("Speed: ", 800, 270);
-      text("Turning: ", 800, 320);
-      text("Health: ", 800, 370);
-      noStroke();
-      fill(75);
-      rect(750, 275, 150, 25);
-      rect(750, 325, 150, 25);
-      rect(750, 375, 150, 25);
-      fill(#0C9CE8);
-      rect(750, 275, (float)((player.getAcceleration() / 0.25) * 150), 25);
-      rect(750, 325, (float)((player.getTurning() / 2) * 150), 25);
-      rect(750, 375, (float)((player.getSHealth() / 600) * 150), 25);
-      stroke(1);
+      startScreen();
     }
     else if(menuState == 3){
       text("Controls:", 500, 150);
       textSize(30);
-      text("Accelerate: UP", 350, 225);
-      text("Reverse: DOWN", 350, 275);
-      text("Turn Left: LEFT", 350, 325);
-      text("Turn Right: RIGHT", 350, 375);
-      text("HyperSpace: SPACE", 650, 225);
-      text("Shoot Bullets: S", 650, 275);
-      text("Pause Game: J", 650, 325);
+      textAlign(CORNER);
+      text("Accelerate: UP", 250, 225);
+      text("Reverse: DOWN", 250, 275);
+      text("Turn Left: LEFT", 250, 325);
+      text("Turn Right: RIGHT", 250, 375);
+      text("HyperSpace: SPACE", 550, 225);
+      text("Shoot Bullets: S", 550, 275);
+      text("Pause Game: J", 550, 325);
+      text("Activate Shield: A", 550, 375);
+      textAlign(CENTER);
+      exit.show();
+    }
+    else if(menuState == 4){
+      text("Power Ups:", 500, 150);
+      PowerUp hMenu = new PowerUp(100, 200, 1);
+      PowerUp rMenu = new PowerUp(100, 250, 2);
+      PowerUp shMenu = new PowerUp(100, 300, 3);
+      PowerUp dbMenu = new PowerUp(100, 350, 4);
+      hMenu.show();
+      rMenu.show();
+      shMenu.show();
+      dbMenu.show();
+      fill(#0C9CE8);
+      textAlign(CORNER);
+      textSize(20);
+      text(hMenu.getName(), 150, 200);
+      text(rMenu.getName(), 150, 250);
+      text(shMenu.getName(), 150, 300);
+      text(dbMenu.getName(), 150, 350);
+      textSize(20);
+      text(hMenu.getDescription(), 300, 200);
+      text(rMenu.getDescription(), 300, 250);
+      text(shMenu.getDescription(), 300, 300);
+      text(dbMenu.getDescription(), 300, 350);
       exit.show();
     }
   }
@@ -144,8 +126,11 @@ void draw(){
       player.move();
       collisions();
       controlShip();
+      player.manageShield();
+      player.manageBullets();
+      player.manageHyperSpace();
+      player.managePowerUps();
       player.show();
-      healthBar();
       trackScore();
       while(asteroids.size() < numAsteroids){
         addAsteroid();
@@ -153,25 +138,40 @@ void draw(){
       while(targeters.size() < numTargeters){
         addTargeter();
       }
+      for(int i = 0; i < asteroids.size(); i++){
+        Asteroid a = asteroids.get(i);
+        a.move();
+        a.show();
+      }
       for(int i = 0; i < targeters.size(); i++){
         Targeter t = (targeters.get(i));
         t.targetShip();
         t.moveShip();
         t.show();
       }
+      for(int i = 0; i < powerUps.size(); i++){
+        PowerUp p = (powerUps.get(i));
+        p.move();
+        p.show();
+      }
+      noStroke();
+      playerStats();
+      stroke(0);
     }
   }
 }
 void keyPressed(){
-  if(key == ' '){
-    boolean collision = true;
-    while(collision){
-      player.hyperSpace();
-      collision = false;
-      for(int i = 0; i < asteroids.size(); i++){
-        Asteroid a = asteroids.get(i);
-        if(a.checkCollision((float)player.getX(), (float)player.getY())){
-          collision = true;
+  if(menu == false){
+    if(key == ' '){
+      boolean collision = true;
+      while(collision){
+        player.hyperSpace();
+        collision = false;
+        for(int i = 0; i < asteroids.size(); i++){
+          Asteroid a = asteroids.get(i);
+          if(a.checkCollision((float)player.getX(), (float)player.getY())){
+            collision = true;
+          }
         }
       }
     }
@@ -193,6 +193,9 @@ void keyPressed(){
   }
   if(key == 'j'){
     paused = !paused;
+  }
+  if(key == 'a'){
+    player.activateShield();
   }
 }
 void keyReleased(){
@@ -219,8 +222,6 @@ void collisions(){
   double psi = (Math.sqrt(Math.pow(player.getXspeed(), 2) + Math.pow(player.getYspeed(), 2)));
   for(int i = 0; i < asteroids.size(); i++){
     Asteroid a = asteroids.get(i);
-    a.move();
-    a.show();
     double pa = atan2((float)a.getYspeed(), (float)a.getXspeed());
     if(a.checkCollision((float)player.getX(), (float)player.getY())){
       double asi = (Math.sqrt(Math.pow(a.getXspeed(), 2) + Math.pow(a.getYspeed(), 2)));
@@ -258,6 +259,24 @@ void collisions(){
         }
       }
     }
+    for(int s = 0; s < powerUps.size(); s++){
+      PowerUp b = powerUps.get(s);
+      if(a.checkCollision((float)b.getX(), (float)b.getY())){
+        aa = atan2((float)b.getYspeed(), (float)b.getYspeed());
+        double ba = atan2((float)a.getYspeed(), (float)a.getYspeed());
+        double asi = (Math.sqrt(Math.pow(a.getXspeed(), 2) + Math.pow(a.getYspeed(), 2)));
+        double bsi = (Math.sqrt(Math.pow(b.getXspeed(), 2) + Math.pow(b.getYspeed(), 2)));
+        double baDirection = (Math.atan2(b.getY() - a.getY(), b.getX() - a.getX()));
+        double intrusion = (a.getSize()) - dist((float)a.getX(), (float)a.getY(), (float)b.getX(), (float)b.getY());
+        b.unIntrude(intrusion, baDirection);
+        a.calculateCollisionSpeed(bsi, b.getMass(), aa);
+        b.calculateCollisionSpeed(asi, a.getMass(), ba);
+        if(a.getHealth() <= 0){
+          asteroids.remove(a);
+          i -= 1;
+        }
+      }
+    }
   }
   for(int i = 0; i < targeters.size(); i++){
     Targeter t = targeters.get(i);
@@ -275,12 +294,20 @@ void collisions(){
       }
     }
   }
+  for(int i = 0; i < powerUps.size(); i++){
+  PowerUp p = powerUps.get(i);
+    if(dist((float)p.getX(), (float)p.getY(), (float)player.getX(), (float)player.getY()) <= (p.getSize()/2) + 10){
+      player.powerUpShip(p);
+      powerUps.remove(p);
+      i--;
+    }
+  }
   for(int i = 0; i < bullets.size(); i++){
   Bullet b = bullets.get(i);
     for(int s = 0; s < asteroids.size(); s++){
       Asteroid a = asteroids.get(s);
       if(dist((float)a.getX(), (float)a.getY(), (float)b.getX(), (float)b.getY()) <= a.getSize()){
-        a.setMass(-0.25);
+        a.setMass(-0.5);
         bullets.remove(b);
         if(a.getHealth() <= 0){
           asteroids.remove(a);
@@ -293,6 +320,8 @@ void collisions(){
       Targeter t = targeters.get(s);
       if(dist((float)t.getX(), (float)t.getY(), (float)b.getX(), (float)b.getY()) <= 5){
         t.setHealth(t.getHealth() - 50);
+        t.setThrusters(false);
+        t.setThrusterTimer(0);
         bullets.remove(b);
         if(t.getHealth() <= 0){
           targeters.remove(t);
@@ -317,12 +346,45 @@ void controlShip(){
     player.accelerate(false);
   }
   if(shoot){
-    if(bulletTimer == 0){
-      bullets.add(new Bullet(player.getX(), player.getY(), player.getDirection()));
-      bulletTimer = bulletTimeLimit;
-    }
-    else{
-      bulletTimer--;
+    if(player.getCanShoot()){
+      if(player.getType() == 5){
+        double rd = (player.getDirection() + 90) * (PI/180);
+        if(player.getDoubleBullets()){
+          bullets.add(new Bullet(player.getX() + (Math.cos(rd) * 5), player.getY() + (Math.sin(rd) * 5), player.getDirection(), #EAA211));
+          bullets.add(new Bullet(player.getX() + (Math.cos(rd) * 5), player.getY() + (Math.sin(rd) * 5), player.getDirection(), #EAA211));
+          bullets.add(new Bullet(player.getX() - (Math.cos(rd) * 5), player.getY() - (Math.sin(rd) * 5), player.getDirection(), #EAA211));
+          bullets.add(new Bullet(player.getX() - (Math.cos(rd) * 5), player.getY() - (Math.sin(rd) * 5), player.getDirection(), #EAA211));
+          player.shootBullet();
+        }
+        else{
+          bullets.add(new Bullet(player.getX() + (Math.cos(rd) * 5), player.getY() + (Math.sin(rd) * 5), player.getDirection()));
+          bullets.add(new Bullet(player.getX() - (Math.cos(rd) * 5), player.getY() - (Math.sin(rd) * 5), player.getDirection()));
+          player.shootBullet();
+        }
+      }
+      else{
+        if(player.getDoubleBullets()){
+          bullets.add(new Bullet(player.getX(), player.getY(), player.getDirection(), #EAA211));
+          bullets.add(new Bullet(player.getX(), player.getY(), player.getDirection(), #EAA211));
+          player.shootBullet();
+        }
+        else{
+          bullets.add(new Bullet(player.getX(), player.getY(), player.getDirection()));
+          player.shootBullet();
+        }
+      }
+      if(player.getDoubleBullets()){
+        if(player.getType() == 5){
+          double rd = (player.getDirection() + 90) * (PI/180);
+          bullets.add(new Bullet(player.getX() + (Math.cos(rd) * 5), player.getY() + (Math.sin(rd) * 5), player.getDirection(), #EAA211));
+          bullets.add(new Bullet(player.getX() - (Math.cos(rd) * 5), player.getY() - (Math.sin(rd) * 5), player.getDirection(), #EAA211));
+          player.shootBullet();
+        }
+        else{
+          bullets.add(new Bullet(player.getX(), player.getY(), player.getDirection(), #EAA211));
+          player.shootBullet();
+        }  
+      }
     }
   }
 }
@@ -336,11 +398,14 @@ void moveBullets(){
     }
   }
 }
-void healthBar(){
+void playerStats(){
   fill(150, 150, 150, 100);
-  rect(0, 0, 300, 50);
+  rect(0, 0, 300, 25);
+  rect(0, 30, 300, 25);
+  rect(width - 300, 0, 300, 25);
+  rect(width - 300, 30, 300, 25);
   fill(255, 0, 0, 75);
-  rect(0, 0, (float)player.getHealthPercentage() * 300, 50);
+  rect(0, 0, (float)player.getHealthPercentage() * 300, 25);
   if(player.getHealth() <= 0){
     menu = true;
     menuState = 2;
@@ -348,6 +413,22 @@ void healthBar(){
     lines[0] = str(highScore);
     saveStrings("HighScore.txt", lines);
   }
+  fill(#0C9CE8, 75);
+  rect(width - 300, 0, (float)(player.getShieldPercentage() * 300), 25);
+  fill(200, 75);
+  rect(0, 30, (float)(player.getReloadPercentage() * 300), 25);
+  fill(#0EC951, 75);
+  rect(width - 300, 30, (float)(player.getHyperSpacePercentage() * 300), 25);
+  fill(player.getPColor(), 75);
+  rect(0, height - 25, (float)(player.getPowerUpPercentage() * width), 25);
+  fill(255, 250);
+  textAlign(CORNER);
+  textSize(15);
+  text("Health", 310, 20);
+  text("Bullets", 310, 50);
+  text("Shield", width - 350, 20);
+  text("HyperSpace", width - 385, 50);
+  textAlign(CENTER);
 }
 void mousePressed(){
   if(menu){
@@ -358,6 +439,9 @@ void mousePressed(){
       }
       if(controls.checkClick()){
         menuState = 3;
+      }
+      if(powerUpInfo.checkClick()){
+        menuState = 4;
       }
       if(bClassic.checkClick()){
         shipType = 1;
@@ -371,8 +455,16 @@ void mousePressed(){
         shipType = 3;
         player = new Spaceship(shipType);
       }
+      if(bShield.checkClick()){
+        shipType = 4;
+        player = new Spaceship(shipType);
+      }
+      if(bDestroyer.checkClick()){
+        shipType = 5;
+        player = new Spaceship(shipType);
+      }
     }
-    else if(menuState == 3){
+    else if(menuState == 3 || menuState == 4){
       if(exit.checkClick()){
         menuState = 1;
       }
@@ -404,6 +496,9 @@ void initializeObjects(){
   player = new Spaceship(shipType);
   asteroids = new ArrayList<Asteroid>();
   targeters = new ArrayList<Targeter>();
+  powerUps = new ArrayList<PowerUp>();
+  numAsteroids = sNumAsteroids;
+  numTargeters = sNumTargeters;
   gFrames = 0;
   for(int i = 0; i < numTargeters; i++){
     Targeter t = new Targeter(Math.random() * width, Math.random() * height, Math.random() * 360, 4, player);
@@ -440,8 +535,11 @@ void trackScore(){
   if(gFrames % 1500 == 0 && numTargeters < 5){
     numTargeters += 1;
   }
+  if(gFrames % 1500 == 0 && powerUps.size() <= 2){
+    addPowerUp();
+  }
   textAlign(CENTER);
-  textSize(40);
+  textSize(30);
   fill(#0C9CE8);
   text("Score: " + score, 500, 30);
   text(" HighScore: " + highScore, 500, 60);
@@ -479,4 +577,70 @@ void addTargeter(){
     t = new Targeter(Math.random() * width, height + 20 * height, Math.random() * 360, 4, player);
   }
   targeters.add(t);
+}
+void addPowerUp(){
+  int spawnSide = (int)(Math.random() * 4);
+  PowerUp p;
+  if(spawnSide == 0){
+    p = new PowerUp(-20, Math.random() * height, (int)(Math.random() * 3 + 1));
+  }
+  else if(spawnSide == 1){
+    p = new PowerUp(width + 20, Math.random() * height, (int)(Math.random() * 3 + 1));
+  }
+  else if(spawnSide == 2){
+    p = new PowerUp(Math.random() * width, -20, (int)(Math.random() * 3 + 1));
+  }
+  else{
+    p = new PowerUp(Math.random() * width, height + 20 * height, (int)(Math.random() * 3 + 1));
+  }
+  powerUps.add(p);
+}
+void startScreen(){
+  start.show();
+  controls.show();
+  powerUpInfo.show();
+  bClassic.show();
+  bSpeed.show();
+  bTank.show();
+  bShield.show();
+  bDestroyer.show();
+  player.setX(475);
+  player.setY(265);
+  player.setShield(false);
+  player.show();
+  fill(#0C9CE8);
+  textSize(30);
+  text("Ship: " + player.getName(), 625, 275);
+  text("Score: " + score, 175, 225);
+  text("Highscore: " + highScore, 400, 225);
+  textSize(20);
+  textAlign(CORNER);
+  for(int i = 0; i < player.getDescriptionLength(); i++){
+    text(player.getDescription()[i], 425, 325 + (i * 25));
+  }
+  textSize(15);
+  text("Acceleration: ", 750, 222);
+  text("Turning: ", 750, 252);
+  text("Health: ", 750, 282);
+  text("Reload Speed: ", 750, 312);
+  text("Shield Time: ", 750, 342);
+  text("Hyper Space Recharge: ", 750, 372);
+  textAlign(CENTER);
+  noStroke();
+  fill(75);
+  rect(750, 225, 150, 15);
+  rect(750, 255, 150, 15);
+  rect(750, 285, 150, 15);
+  rect(750, 345, 150, 15);
+  fill(#0C9CE8);
+  rect(750, 225, (float)((player.getAcceleration() / 0.25) * 150), 15);
+  rect(750, 255, (float)((player.getTurning() / 2) * 150), 15);
+  rect(750, 285, (float)((player.getSHealth() / 600) * 150), 15);
+  rect(750, 315, 150, 15);
+  rect(750, 345, (float)((player.getSShieldTimer() / 300) * 150), 15);
+  rect(750, 375, 150, 15);
+  fill(75);
+  rect(900 - (float)((player.getReloadSpeed() / 15) * 150) + 40, 315, (float)((player.getReloadSpeed() / 15) * 150) - 40, 15);
+  rect(900 - (float)((player.getSHyperSpaceTimer() / 250) * 150) + 40, 375, (float)((player.getSHyperSpaceTimer() / 250) * 150) - 40, 15);
+  stroke(1);
 }
