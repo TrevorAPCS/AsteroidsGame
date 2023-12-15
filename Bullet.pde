@@ -7,6 +7,15 @@ class Bullet extends Floater{
     myPointDirection = dir;
     mySpeed = 5;
     outOfBounds = false;
+    myColor = 200;
+  }
+  public Bullet(double x, double y, double dir, int c){
+    myCenterX = x;
+    myCenterY = y;
+    myPointDirection = dir;
+    mySpeed = 5;
+    outOfBounds = false;
+    myColor = c;
   }
   public double getX(){
     return myCenterX;
@@ -28,7 +37,7 @@ class Bullet extends Floater{
     }
   }
   public void show(){
-    fill(100);
+    fill(myColor);
     stroke(0);
     ellipse((float)myCenterX, (float)myCenterY, 5, 5);
   }
