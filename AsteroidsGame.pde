@@ -582,16 +582,16 @@ void addPowerUp(){
   int spawnSide = (int)(Math.random() * 4);
   PowerUp p;
   if(spawnSide == 0){
-    p = new PowerUp(-20, Math.random() * height, (int)(Math.random() * 3 + 1));
+    p = new PowerUp(-20, Math.random() * height, (int)(Math.random() * 4 + 1));
   }
   else if(spawnSide == 1){
-    p = new PowerUp(width + 20, Math.random() * height, (int)(Math.random() * 3 + 1));
+    p = new PowerUp(width + 20, Math.random() * height, (int)(Math.random() * 4 + 1));
   }
   else if(spawnSide == 2){
-    p = new PowerUp(Math.random() * width, -20, (int)(Math.random() * 3 + 1));
+    p = new PowerUp(Math.random() * width, -20, (int)(Math.random() * 4 + 1));
   }
   else{
-    p = new PowerUp(Math.random() * width, height + 20 * height, (int)(Math.random() * 3 + 1));
+    p = new PowerUp(Math.random() * width, height + 20 * height, (int)(Math.random() * 4 + 1));
   }
   powerUps.add(p);
 }
