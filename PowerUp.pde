@@ -30,7 +30,7 @@ class PowerUp extends Asteroid{
       timeVal = 0;
       shieldVal = (int)(Math.random() * 25 + 25);
       name = "Shield Boost";
-      description = "Recharges shield by up to 50 points. No effect if shield recharge is at max.";
+      description = "Recharges shield up to 50 points. No effect if shield is at max.";
     }
     else if(t == 4){
       //double bullets
