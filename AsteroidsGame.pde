@@ -11,7 +11,7 @@ boolean right = false;
 boolean up = false;
 boolean down = false;
 boolean shoot = false;
-int sNumAsteroids = 30;
+int sNumAsteroids = 25;
 int sNumTargeters = 0;
 int numAsteroids;
 int numTargeters;
