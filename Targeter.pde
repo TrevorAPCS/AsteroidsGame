@@ -62,21 +62,20 @@ class Targeter extends Spaceship{
     if(myPointDirection < -180){myPointDirection += 180;}
   }
   public void moveShip(){
-    //maxSpeed = 0.001 * dist((float)target.getX(), (float)target.getY(), (float)myCenterX, (float)myCenterY) + 1;
     if(thrusters){
       setAccelerating(true);
       accelerate(0.1);
       if(myXspeed > maxSpeed){
-        myXspeed -= 0.1;
+        myXspeed = maxSpeed;
       }
       if(myYspeed > maxSpeed){
-        myYspeed -= 0.1;
+        myYspeed = maxSpeed;
       }
       if(myXspeed < -maxSpeed){
-        myXspeed += 0.1;
+        myXspeed = -maxSpeed;
       }
       if(myYspeed < -maxSpeed){
-        myYspeed += 0.1;
+        myYspeed = -maxSpeed;
       }
     }
     move();
